@@ -1,0 +1,8 @@
+module-1/target
+module-2/target
+module-3/target
+target
+.vscode
+.settings
+.project
+.classpath
