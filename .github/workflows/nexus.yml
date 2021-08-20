@@ -6,7 +6,7 @@ jobs:
   prepare:
     name: Prepare Nexus
     outputs:
-      NEXUS_ADMIN_PASS: ${steps.nexus_password_retrieve.NEXUS_PASS}
+      NEXUS_ADMIN_PASS: ${steps.nexus_password_retrieve.clave}
     runs-on: ubuntu-latest
     steps:
       - name: Start Sonatype Nexus container
@@ -28,10 +28,10 @@ jobs:
           echo "---------------"
           docker exec nexus cat /nexus-data/admin.password
           echo "---------------"
-          echo ::set-output name=NEXUS_PASS::$(docker exec nexus cat /nexus-data/admin.password)
+          echo ::set-output name=clave::$(docker exec nexus cat /nexus-data/admin.password)
           echo "---------------"
       - name: debug
-        run: echo ${{steps.nexus_password_retrieve.NEXUS_PASS}}
+        run: echo ${{steps.nexus_password_retrieve.clave}}
 
   build-mm:
     needs: [prepare]
