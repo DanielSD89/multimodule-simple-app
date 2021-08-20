@@ -61,6 +61,27 @@ jobs:
                   "contentDisposition": "ATTACHMENT"
                 }
               }'
+      - name: Check fail
+        run: |
+          curl -X 'POST' \
+          'http://localhost:8081/service/rest/v1/repositories/maven/hosted' \
+          -H 'accept: application/json' \
+          -H 'Content-Type: application/json' \
+          -u 'admin:${{secrets.NEW_NEXUS_ADMIN_PASSWORD}}' \
+          -d '{
+                "name": "maven-release-candidates",
+                "online": true,
+                "storage": {
+                  "blobStoreName": "default",
+                  "strictContentTypeValidation": true,
+                  "writePolicy": "allow_once"
+                },
+                "maven": {
+                  "versionPolicy": "MIXED",
+                  "layoutPolicy": "STRICT",
+                  "contentDisposition": "ATTACHMENT"
+                }
+              }'
 
   build-mm:
     needs: [prepare]
