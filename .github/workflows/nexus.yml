@@ -68,7 +68,7 @@ jobs:
           -H 'accept: application/json' \
           -H 'Content-Type: application/json' \
           -u 'admin:${{secrets.NEW_NEXUS_ADMIN_PASSWORD}}' \
-          -w "%{http_code}\n"
+          -w "%{http_code}\n" \
           -d '{
                 "name": "maven-release-candidates",
                 "online": true,
