@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Start Sonatype Nexus container
-        runs: |
+        run: |
           docker create volume nexus-volume
           docker run -d -p 8081:8081 --name nexus --volume nexus-volume:/nexus-data/:rw sonatype/nexus3
       - id: nexus-password-retrieve
