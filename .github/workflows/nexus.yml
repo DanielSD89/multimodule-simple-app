@@ -6,7 +6,7 @@ jobs:
   prepare:
     name: Prepare Nexus
     outputs:
-      NEXUS_ADMIN_PASS: ${steps.nexus-password-retrieve.NEXUS_PASS}
+      NEXUS_ADMIN_PASS: ${steps.nexus_password_retrieve.NEXUS_PASS}
     runs-on: ubuntu-latest
     steps:
       - name: Start Sonatype Nexus container
@@ -22,9 +22,11 @@ jobs:
             sleep 10 
             docker container logs nexus 2>&1 | grep "Started Sonatype Nexus OSS" && break
           done
-      - id: nexus-password-retrieve
+      - id: nexus_password_retrieve
         name: Get admin password
         run: echo '::set-output name=NEXUS_PASS::docker exec nexus cat /nexus-data/admin.password'
+      - name: debug
+        run: echo ${{steps.nexus_password_retrieve.NEXUS_PASS}}
 
   build-mm:
     needs: [prepare]
@@ -52,7 +54,7 @@ jobs:
 
   build-simple:
     needs: [prepare]
-    name: Build multimodule
+    name: Build simple
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repo
@@ -66,7 +68,7 @@ jobs:
 
   deploy-simple:
     needs: [prepare,build-simple]
-    name: Deploy multimodule
+    name: Deploy simple
     runs-on: ubuntu-latest
     steps:
       - name: Deploy
