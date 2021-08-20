@@ -6,7 +6,7 @@ jobs:
   prepare:
     name: Prepare Nexus
     outputs:
-      NEXUS_ADMIN_PASS: ${steps.nexus_password_retrieve.clave}
+      nexus-admin-pass: ${steps.nexus-password.outputs.clave}
     runs-on: ubuntu-latest
     steps:
       - name: Start Sonatype Nexus container
@@ -22,18 +22,14 @@ jobs:
             sleep 10 
             docker container logs nexus 2>&1 | grep "Started Sonatype Nexus OSS" && break
           done
-      - id: nexus_password_retrieve
+      - id: nexus-password
         name: Get admin password
         run: |
-          echo "---------------"
           pass=$(docker exec nexus cat /nexus-data/admin.password)
-          echo "---------------"
-          echo $pass
-          echo "---------------"
           echo "::set-output name=clave::$pass"
-          echo "---------------"
+
       - name: debug
-        run: echo ${{steps.nexus_password_retrieve.clave}}
+        run: echo ${{steps.nexus-password.outputs.clave}}
 
   build-mm:
     needs: [prepare]
@@ -57,7 +53,7 @@ jobs:
       - name: Deploy
         run: echo "deploy using password"
       - name: 
-        run: echo ${{ needs.prepare.outputs.NEXUS_ADMIN_PASS }}
+        run: echo ${{ needs.prepare.outputs.nexus-admin-pass }}
 
   build-simple:
     needs: [prepare]
@@ -81,7 +77,7 @@ jobs:
       - name: Deploy
         run: echo "deploy using password"
       - name: 
-        run: echo ${{ needs.prepare.outputs.NEXUS_ADMIN_PASS }}
+        run: echo ${{ needs.prepare.outputs.nexus-admin-pass }}
 
 
   check-deployment:
