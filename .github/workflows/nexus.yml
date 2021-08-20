@@ -11,6 +11,7 @@ jobs:
     steps:
       - name: Start Sonatype Nexus container
         run: |
+          docker login -u ${secrets.DOCKERHUB_USER} -p ${secrets.DOCKERHUB_PASS}
           docker create volume nexus-volume
           docker run -d -p 8081:8081 --name nexus --volume nexus-volume:/nexus-data/:rw sonatype/nexus3
       - id: nexus-password-retrieve
