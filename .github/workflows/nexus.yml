@@ -63,11 +63,12 @@ jobs:
               }'
       - name: Check fail
         run: |
-          curl -X 'POST' \
+          returncode=$(curl -X 'POST' \
           'http://localhost:8081/service/rest/v1/repositories/maven/hosted' \
           -H 'accept: application/json' \
           -H 'Content-Type: application/json' \
           -u 'admin:${{secrets.NEW_NEXUS_ADMIN_PASSWORD}}' \
+          -w "%{http_code}\n"
           -d '{
                 "name": "maven-release-candidates",
                 "online": true,
@@ -81,7 +82,7 @@ jobs:
                   "layoutPolicy": "STRICT",
                   "contentDisposition": "ATTACHMENT"
                 }
-              }'
+              }') && [[ $returncode == "201" ]]
 
   build-mm:
     needs: [prepare]
