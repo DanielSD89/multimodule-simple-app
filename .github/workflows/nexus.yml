@@ -11,7 +11,7 @@ jobs:
     steps:
       - name: Start Sonatype Nexus container
         run: |
-          docker login -u ${secrets.DOCKERHUB_USER} -p ${secrets.DOCKERHUB_PASS}
+          docker login -u ${{secrets.DOCKERHUB_USER}} -p ${{secrets.DOCKERHUB_PASS}}
           docker create volume nexus-volume
           docker run -d -p 8081:8081 --name nexus --volume nexus-volume:/nexus-data/:rw sonatype/nexus3
       - id: nexus-password-retrieve
@@ -32,7 +32,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Deploy
-        run: echo "deploy using password ${needs.prepare.outputs.nexus-admin-password}"
+        run: echo "deploy using password ${{needs.prepare.outputs.nexus-admin-password}}"
 
   check-deployment:
     needs: [deploy]
