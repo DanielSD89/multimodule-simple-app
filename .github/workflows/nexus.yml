@@ -24,7 +24,9 @@ jobs:
           done
       - id: nexus_password_retrieve
         name: Get admin password
-        run: echo ::set-output name=NEXUS_PASS::$(docker exec nexus cat /nexus-data/admin.password)
+        run: |
+          docker exec nexus cat /nexus-data/admin.password
+          echo ::set-output name=NEXUS_PASS::$(docker exec nexus cat /nexus-data/admin.password)
       - name: debug
         run: echo ${{steps.nexus_password_retrieve.NEXUS_PASS}}
 
