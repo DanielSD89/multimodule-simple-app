@@ -23,7 +23,13 @@ jobs:
     name: Build multimodule
     runs-on: ubuntu-latest
     steps:
-      - name: build multimodule
+      - name: Checkout repo
+        uses: actions/checkout@v2
+      - uses: actions/setup-java@v2
+        with:
+          distribution: 'zulu'
+          java-version: '8'
+      - name: Build multimodule
         run: mvn clean package
   
   deploy:
