@@ -14,9 +14,16 @@ jobs:
           docker login -u ${{secrets.DOCKERHUB_USER}} -p ${{secrets.DOCKERHUB_PASS}}
           docker volume create nexus-volume
           docker run -d -p 8081:8081 --name nexus --volume nexus-volume:/nexus-data/:rw sonatype/nexus3
+      - name: Check Nexus status
+        run: | 
+          while true; 
+          do 
+            sleep 10 && docker container logs nexusr 2>&1 | grep "Started Sonatype Nexus OSS" && break; 
+          done
       - id: nexus-password-retrieve
         name: Get admin password
         run: echo '::set-output name=NEXUS_PASS::docker exec nexus cat /nexus-data/admin.password'
+
 
   build:
     needs: [prepare]
