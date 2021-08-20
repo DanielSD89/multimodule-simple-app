@@ -1,0 +1,42 @@
+name: Deploy mm to Nx
+
+on: push
+
+jobs:
+  prepare:
+    name: Prepare Nexus
+    outputs:
+      nexus-admin-password: ${steps.nexus-password-retrieve.NEXUS_PASS}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Start Sonatype Nexus container
+        runs: |
+          docker create volume nexus-volume
+          docker run -d -p 8081:8081 --name nexus --volume nexus-volume:/nexus-data/:rw sonatype/nexus3
+      - id: nexus-password-retrieve
+        name: Get admin password
+        runs: echo '::set-output name=NEXUS_PASS::docker exec nexus cat /nexus-data/admin.password'
+
+  build:
+    needs: [prepare]
+    name: Build multimodule
+    runs-on: ubuntu-latest
+    steps:
+      - name: build multimodule
+        run: mvn clean package
+  
+  deploy:
+    needs: [prepare,build]
+    name: Deploy multimodule
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy
+        run: echo "deploy using password ${needs.prepare.outputs.nexus-admin-password}"
+
+  check-deployment:
+    needs: [deploy]
+    name: Check deployed artifacts
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check Deploy
+        run: echo "Check deploy"
