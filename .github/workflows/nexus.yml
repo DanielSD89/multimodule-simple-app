@@ -5,8 +5,6 @@ on: push
 jobs:
   prepare:
     name: Prepare Nexus
-    outputs:
-      nexus-admin-pass: ${steps.nexus-password.outputs.clave}
     runs-on: ubuntu-latest
     steps:
       - name: Start Sonatype Nexus container
@@ -26,10 +24,13 @@ jobs:
         name: Get admin password
         run: |
           pass=$(docker exec nexus cat /nexus-data/admin.password)
-          echo "::set-output name=clave::$pass"
-
-      - name: debug
-        run: echo ${{steps.nexus-password.outputs.clave}}
+          echo "::set-output name=nexus-password::$pass"
+      - name: Change default admin password
+        run: |
+          curl -ifu admin:"${{steps.nexus-password.outputs.nexus-password}}" \
+          -XPUT -H 'Content-Type: text/plain' \
+          --data "${{secrets.NEW_NEXUS_ADMIN_PASSWORD}}" \
+          http://localhost:8081/service/rest/v1/security/users/admin/change-password
 
   build-mm:
     needs: [prepare]
@@ -51,9 +52,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Deploy
-        run: echo "deploy using password"
-      - name: 
-        run: echo ${{ needs.prepare.outputs.nexus-admin-pass }}
+        run: echo "deploy"
 
   build-simple:
     needs: [prepare]
@@ -75,10 +74,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Deploy
-        run: echo "deploy using password"
-      - name: 
-        run: echo ${{ needs.prepare.outputs.nexus-admin-pass }}
-
+        run: echo "deploy"
 
   check-deployment:
     needs: [deploy-mm,deploy-simple]
