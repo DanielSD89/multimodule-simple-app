@@ -26,7 +26,6 @@ jobs:
         name: Get admin password
         run: echo '::set-output name=NEXUS_PASS::docker exec nexus cat /nexus-data/admin.password'
 
-
   build:
     needs: [prepare]
     name: Build multimodule
@@ -47,7 +46,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Deploy
-        run: echo "deploy using password ${{ needs.prepare.outputs.NEXUS_ADMIN_PASS }}"
+        run: echo "deploy using password"
+      - name: 
+        run: echo ${{ needs.prepare.outputs.NEXUS_ADMIN_PASS }}
 
   check-deployment:
     needs: [deploy]
