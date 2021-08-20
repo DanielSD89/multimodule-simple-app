@@ -6,7 +6,7 @@ jobs:
   prepare:
     name: Prepare Nexus
     outputs:
-      nexus-admin-password: ${steps.nexus-password-retrieve.NEXUS_PASS}
+      NEXUS_ADMIN_PASS: ${steps.nexus-password-retrieve.NEXUS_PASS}
     runs-on: ubuntu-latest
     steps:
       - name: Start Sonatype Nexus container
@@ -38,7 +38,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Deploy
-        run: echo "deploy using password ${{needs.prepare.outputs.nexus-admin-password}}"
+        run: echo "deploy using password ${{ needs.prepare.outputs.NEXUS_ADMIN_PASS }}"
 
   check-deployment:
     needs: [deploy]
