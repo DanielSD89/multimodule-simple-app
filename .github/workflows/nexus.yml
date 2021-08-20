@@ -27,8 +27,8 @@ jobs:
         run: |
           echo "---------------"
           docker exec nexus cat /nexus-data/admin.password
-          echo "---------------"
-          echo ::set-output name=clave::$(docker exec nexus cat /nexus-data/admin.password)
+          echo "\n---------------"
+          echo "::set-output name=clave::$(docker exec nexus cat /nexus-data/admin.password)"
           echo "---------------"
       - name: debug
         run: echo ${{steps.nexus_password_retrieve.clave}}
