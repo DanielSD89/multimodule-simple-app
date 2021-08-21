@@ -8,6 +8,15 @@
   <proxies>
   </proxies>
 
+ <mirrors>
+    <mirror>
+        <id>nexus</id>
+        <mirrorOf>*</mirrorOf>
+        <name>Nexus Localhost</name>
+        <url>http://localhost:8081/repository/maven-public/</url>
+    </mirror>
+</mirrors>
+
   <servers>
     <server>
       <id>nexus</id>
