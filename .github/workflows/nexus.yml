@@ -64,9 +64,9 @@ jobs:
                 }
               }') && [[ $returncode == "201" ]]
 
-  build-mm:
+  build-and-publish-mm:
     needs: [prepare]
-    name: Build multimodule
+    name: Build and publish multimodule artifacts
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repo
@@ -77,18 +77,12 @@ jobs:
           java-version: '8'
       - name: Build multimodule
         run: mvn clean package -f multimodule/pom.xml
-  
-  deploy-mm:
-    needs: [prepare,build-mm]
-    name: Deploy multimodule
-    runs-on: ubuntu-latest
-    steps:
-      - name: Deploy
-        run: echo "deploy"
+      - name: Publish multimodule artifact
+        run: echo "publish"
 
-  build-simple:
+  build-and-publish-simple:
     needs: [prepare]
-    name: Build simple
+    name: Build and publish simple artifact
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repo
@@ -99,14 +93,8 @@ jobs:
           java-version: '8'
       - name: Build multimodule
         run: mvn clean package -f simple-app/pom.xml
-
-  deploy-simple:
-    needs: [prepare,build-simple]
-    name: Deploy simple
-    runs-on: ubuntu-latest
-    steps:
-      - name: Deploy
-        run: echo "deploy"
+      - name: Publish simple artifact
+        run: echo "publish"
 
   check-deployment:
     needs: [deploy-mm,deploy-simple]
