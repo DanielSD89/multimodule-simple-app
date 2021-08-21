@@ -101,7 +101,7 @@ jobs:
           NEXUS_PASS: ${{secrets.NEW_NEXUS_ADMIN_PASSWORD}}
         run: |
           mvn \
-          -s config/settingx.xml \
+          -s config/settings.xml \
           -f simple-app/pom.xml deploy \
           -DaltDeploymentRepository=nexus::default::http://localhost:8081/repository/maven-snapshots
 
