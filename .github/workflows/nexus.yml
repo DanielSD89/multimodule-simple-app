@@ -97,7 +97,7 @@ jobs:
         run: echo "publish"
 
   check-deployment:
-    needs: [deploy-mm,deploy-simple]
+    needs: [build-and-publish-simple,build-and-publish-mm]
     name: Check deployed artifacts
     runs-on: ubuntu-latest
     steps:
