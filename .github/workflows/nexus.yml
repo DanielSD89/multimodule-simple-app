@@ -97,7 +97,7 @@ jobs:
       
       - name: Check Deploy
         run: |
-          curl -X 'GET' \
-          -u 'admin:${{secrets.NEW_NEXUS_ADMIN_PASSWORD}}' \ 
+          curl -X 'GET' \ 
           'http://localhost:8081/service/rest/v1/search?sort=name&repository=maven-snapshots&maven.artifactId=simple-app' \
+          -u 'admin:${{secrets.NEW_NEXUS_ADMIN_PASSWORD}}' \
           -H 'accept: application/json' | jq
