@@ -86,6 +86,14 @@ jobs:
       - name: Build multimodule
         run: mvn clean package -f multimodule/pom.xml
       - name: Publish multimodule artifact
-        run: echo "publish"
+        env:
+          NEXUS_USER: admin
+          NEXUS_PASS: ${{secrets.NEW_NEXUS_ADMIN_PASSWORD}}
+        run: |
+          mvn \
+          -s config/settings.xml \
+          -f simple-app/pom.xml deploy \
+          -DaltDeploymentRepository=nexus::default::http://localhost:8081/repository/maven-snapshots
+      
       - name: Check Deploy
         run: echo "Check deploy"
