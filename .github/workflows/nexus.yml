@@ -1,10 +1,10 @@
-name: Deploy mm to Nx
+name: Deploy mm and simple to Nx
 
 on: push
 
 jobs:
-  prepare:
-    name: Prepare Nexus
+  execute:
+    name: Execute
     runs-on: ubuntu-latest
     steps:
       - name: Start Sonatype Nexus container
