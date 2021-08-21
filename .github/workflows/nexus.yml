@@ -83,17 +83,20 @@ jobs:
           -f simple-app/pom.xml deploy \
           -DaltDeploymentRepository=nexus::default::http://localhost:8081/repository/maven-snapshots
       
-      - name: Build multimodule
-        run: mvn clean verify -f multimodule/pom.xml -q
-      - name: Publish multimodule artifact
-        env:
-          NEXUS_USER: admin
-          NEXUS_PASS: ${{secrets.NEW_NEXUS_ADMIN_PASSWORD}}
-        run: |
-          mvn \
-          -s config/settings.xml \
-          -f multimodule/pom.xml deploy \
-          -DaltDeploymentRepository=nexus::default::http://localhost:8081/repository/maven-snapshots
+#      - name: Build multimodule
+#        run: mvn clean verify -f multimodule/pom.xml -q
+#      - name: Publish multimodule artifact
+#        env:
+#          NEXUS_USER: admin
+#          NEXUS_PASS: ${{secrets.NEW_NEXUS_ADMIN_PASSWORD}}
+#        run: |
+#          mvn \
+#          -s config/settings.xml \
+#          -f multimodule/pom.xml deploy \
+#          -DaltDeploymentRepository=nexus::default::http://localhost:8081/repository/maven-snapshots
       
       - name: Check Deploy
-        run: echo "Check deploy"
+        run: |
+          curl -X 'GET' \
+          'http://localhost:8081/service/rest/v1/search?sort=name&repository=maven-snapshots&maven.artifactId=simple-app' \
+          -H 'accept: application/json' | jq
