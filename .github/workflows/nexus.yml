@@ -71,7 +71,8 @@ jobs:
     steps:
       - name: Checkout repo
         uses: actions/checkout@v2
-      - uses: actions/setup-java@v2
+      - name: Setup JDK 8
+        uses: actions/setup-java@v2
         with:
           distribution: 'zulu'
           java-version: '8'
@@ -87,14 +88,22 @@ jobs:
     steps:
       - name: Checkout repo
         uses: actions/checkout@v2
-      - uses: actions/setup-java@v2
+      - name: Setup JDK 8
+        uses: actions/setup-java@v2
         with:
           distribution: 'zulu'
           java-version: '8'
       - name: Build multimodule
         run: mvn clean package -f simple-app/pom.xml
       - name: Publish simple artifact
-        run: echo "publish"
+        env:
+          NEXUS_USER: admin
+          NEXUS_PASS: ${{secrets.NEW_NEXUS_ADMIN_PASSWORD}}
+        run: |
+          mvn \
+          -s config/settingx.xml \
+          -f simple-app/pom.xml deploy \
+          -DaltDeploymentRepository=nexus::default::http://localhost:8081/repository/maven-snapshots
 
   check-deployment:
     needs: [build-and-publish-simple,build-and-publish-mm]
