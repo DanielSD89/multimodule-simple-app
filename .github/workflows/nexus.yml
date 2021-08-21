@@ -72,7 +72,7 @@ jobs:
           java-version: '8'
       
       - name: Build simple
-        run: mvn clean package -f simple-app/pom.xml
+        run: mvn clean verify -f simple-app/pom.xml -q
       - name: Publish simple artifact
         env:
           NEXUS_USER: admin
@@ -84,7 +84,7 @@ jobs:
           -DaltDeploymentRepository=nexus::default::http://localhost:8081/repository/maven-snapshots
       
       - name: Build multimodule
-        run: mvn clean package -f multimodule/pom.xml
+        run: mvn clean verify -f multimodule/pom.xml -q
       - name: Publish multimodule artifact
         env:
           NEXUS_USER: admin
@@ -92,7 +92,7 @@ jobs:
         run: |
           mvn \
           -s config/settings.xml \
-          -f simple-app/pom.xml deploy \
+          -f multimodule/pom.xml deploy \
           -DaltDeploymentRepository=nexus::default::http://localhost:8081/repository/maven-snapshots
       
       - name: Check Deploy
