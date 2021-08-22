@@ -72,7 +72,12 @@ jobs:
           java-version: '8'
       
       - name: Build simple
-        run: mvn clean verify -f simple-app/pom.xml -q
+        run: |
+          mvn \
+          -s config/settings.xml \
+          -f simple-app/pom.xml \
+          -q \
+          clean verify 
       - name: Publish simple artifact
         env:
           NEXUS_USER: admin
@@ -80,7 +85,8 @@ jobs:
         run: |
           mvn \
           -s config/settings.xml \
-          -f simple-app/pom.xml deploy \
+          -f simple-app/pom.xml \
+          deploy \
           -DaltDeploymentRepository=nexus::default::http://localhost:8081/repository/maven-snapshots
       
 #      - name: Build multimodule
@@ -102,8 +108,8 @@ jobs:
           -H 'accept: application/json' | jq
 
       - id: project-version
-        name: Extract Maven project version
-        run: echo ::set-output name=version::$(mvn -q -s config/settings.xml -Dexec.executable=echo -Dexec.args='${project.version}' --non-recursive exec:exec 2>/dev/null)
+        name: Extract Maven project version from simple-app
+        run: echo ::set-output name=version::$(mvn -q -s config/settings.xml -f simple-app/pom.xml -Dexec.executable=echo -Dexec.args='${project.version}' --non-recursive exec:exec 2>/dev/null)
 
       - name: Display current version
         run: echo ${{steps.project-version.outputs.version}}
@@ -116,10 +122,25 @@ jobs:
         run: echo ${{steps.project-new-version.outputs.newversion}} 
 
       - name: Applying new version to the pom.xml
-        run: mvn -s config/settings.xml  versions:set -DnewVersion=${{steps.project-new-version.outputs.newversion}} -DgenerateBackupPoms=false -q
+        run: |
+          mvn \
+          -s config/settings.xml \
+          -f simple-app/pom.xml \
+          -q \
+          -DnewVersion=${{steps.project-new-version.outputs.newversion}} \
+          -DgenerateBackupPoms=false \
+          versions:set  
       
       - name: Display new version from pom.xml
-        run: mvn -q -s config/settings.xml  -Dexec.executable=echo -Dexec.args='${project.version}' --non-recursive exec:exec
+        run: |
+          mvn \
+          -f simple-app/pom.xml \
+          -q \
+          -s config/settings.xml \
+          -Dexec.executable=echo \
+          -Dexec.args='${project.version}' \
+          --non-recursive \
+          exec:exec
       
       #outputs
         #next-tag-number
