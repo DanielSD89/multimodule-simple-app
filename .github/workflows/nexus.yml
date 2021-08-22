@@ -100,3 +100,33 @@ jobs:
           curl -X 'GET' \
           'http://localhost:8081/service/rest/v1/search?sort=name&repository=maven-snapshots&maven.artifactId=simple-app' \
           -H 'accept: application/json' | jq
+
+      - id: project-version
+        name: Extract Maven project version
+        run: echo ::set-output name=version::$(./mvn -q -s config/settings.xml -Dexec.executable=echo -Dexec.args='${project.version}' --non-recursive exec:exec 2>/dev/null)
+
+      - name: Display current version
+        run: echo ${{steps.project-version.outputs.version}}
+
+      - id: project-new-version
+        name: Removing SNAPSHOT from version
+        run: echo ::set-output name=newversion::$(sed -e 's/-SNAPSHOT//g' <<< ${{steps.project-version.outputs.version}})
+
+      - name: Display new version
+        run: echo ${{steps.project-new-version.outputs.newversion}} 
+
+      - name: Applying new version to the pom.xml
+        run: ./mvn -s config/settings.xml  versions:set -DnewVersion=${{steps.project-new-version.outputs.newversion}} -DgenerateBackupPoms=false -q
+      
+      - name: Display new version from pom.xml
+        run: ./mvn -q -s config/settings.xml  -Dexec.executable=echo -Dexec.args='${project.version}' --non-recursive exec:exec
+      
+      #outputs
+        #next-tag-number
+        #new-tag
+      - id: next-rc-number
+        name: Retrieving next RC number
+        uses: santander-group/git-tag-counter-action@main
+        with:
+          version: ${{steps.project-new-version.outputs.newversion}}-RC
+      
